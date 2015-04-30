@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -17,7 +18,7 @@ class GildedRose {
 
     public GildedRose(Item[] items) {
         this.itemUpdateHelpers = Arrays.asList(items).stream().map(this::buildItemUpdateHelper);
-        this.itemTypes = new HashMap<>();
+        this.itemTypes = new ConcurrentHashMap<>();
         populateItemTypes(itemTypes);
     }
 
