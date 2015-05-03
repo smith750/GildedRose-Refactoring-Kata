@@ -6,52 +6,68 @@ function Item(name, sell_in, quality) {
 
 var items = []
 
-function update_quality(item) {
-	if (items[i].name != 'Aged Brie' && items[i].name != 'Backstage passes to a TAFKAL80ETC concert') {
-      if (items[i].quality > 0) {
-        if (items[i].name != 'Sulfuras, Hand of Ragnaros') {
-          items[i].quality = items[i].quality - 1
-        }
-      }
+var MAX_QUALITY = 50
+var MIN_QUALITY = 0
+var TIME_SENSITIVE_DAYS_FASTER = 10
+var TIME_SENSITIVE_DAYS_FASTEST = 5
+var SELL_IN_DATE = 0
+
+function update_quality_for_item(item) {
+	if (item.name != 'Aged Brie' && item.name != 'Backstage passes to a TAFKAL80ETC concert' && item.name != 'Sulfuras, Hand of Ragnaros') {
+    	decrease_quality(item)
     } else {
-      if (items[i].quality < 50) {
-        items[i].quality = items[i].quality + 1
-        if (items[i].name == 'Backstage passes to a TAFKAL80ETC concert') {
-          if (items[i].sell_in < 11) {
-            if (items[i].quality < 50) {
-              items[i].quality = items[i].quality + 1
-            }
+        increase_quality(item)
+        if (item.name == 'Backstage passes to a TAFKAL80ETC concert') {
+          if (item.sell_in <= TIME_SENSITIVE_DAYS_FASTER) {
+            increase_quality(item)
           }
-          if (items[i].sell_in < 6) {
-            if (items[i].quality < 50) {
-              items[i].quality = items[i].quality + 1
-            }
+          if (item.sell_in <= TIME_SENSITIVE_DAYS_FASTEST) {
+            increase_quality(item)
           }
         }
-      }
     }
-    if (items[i].name != 'Sulfuras, Hand of Ragnaros') {
-      items[i].sell_in = items[i].sell_in - 1;
+    if (item.name != 'Sulfuras, Hand of Ragnaros') {
+      decrease_sell_in(item)
     }
-    if (items[i].sell_in < 0) {
-      if (items[i].name != 'Aged Brie') {
-        if (items[i].name != 'Backstage passes to a TAFKAL80ETC concert') {
-          if (items[i].quality > 0) {
-            if (items[i].name != 'Sulfuras, Hand of Ragnaros') {
-              items[i].quality = items[i].quality - 1
+    if (item.sell_in < SELL_IN_DATE) {
+      if (item.name != 'Aged Brie') {
+        if (item.name != 'Backstage passes to a TAFKAL80ETC concert') {
+            if (item.name != 'Sulfuras, Hand of Ragnaros') {
+              decrease_quality(item)
             }
-          }
         } else {
-          items[i].quality = items[i].quality - items[i].quality
+          clear_quality(item)
         }
       } else {
-        if (items[i].quality < 50) {
-          items[i].quality = items[i].quality + 1
-        }
+        increase_quality(item)
       }
     }
 }
 
-function update_quality() {
-  items.map(item);
+function increase_quality(item) {
+	if (item.quality < MAX_QUALITY) {
+		item.quality = item.quality + 1
+	}
 }
+
+function decrease_quality(item) {
+	if (item.quality > MIN_QUALITY) {
+		item.quality = item.quality - 1
+	}
+}
+
+function clear_quality(item) {
+	item.quality = MIN_QUALITY
+}
+
+function decrease_sell_in(item) {
+	item.sell_in = item.sell_in - 1
+}
+
+function update_quality() {
+    items.map(update_quality_for_item)
+}
+
+module.exports.Item = Item;
+module.exports.items = items;
+module.exports.update_quality = update_quality;
