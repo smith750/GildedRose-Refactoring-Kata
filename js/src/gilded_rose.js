@@ -12,36 +12,47 @@ var TIME_SENSITIVE_DAYS_FASTER = 10
 var TIME_SENSITIVE_DAYS_FASTEST = 5
 var SELL_IN_DATE = 0
 
+function build_updater(item) {
+	if (item.name == 'Aged Brie') {
+		return function() {
+			increase_quality(item)
+			decrease_sell_in(item)
+		}
+	} else if (item.name == 'Backstage passes to a TAFKAL80ETC concert') {
+		return function() {
+			if (item.sell_in < SELL_IN_DATE) {
+				clear_quality(item)
+			} else {
+				increase_quality(item)
+				if (item.sell_in <= TIME_SENSITIVE_DAYS_FASTER) {
+		        	increase_quality(item)
+		        }
+		        if (item.sell_in <= TIME_SENSITIVE_DAYS_FASTEST) {
+		        	increase_quality(item)
+		        }
+			}
+			decrease_sell_in(item)
+		}
+	} else if (item.name == 'Sulfuras, Hand of Ragnaros') {
+		return function() { 
+			// don't do nothing
+		}
+	} else if (item.name == 'Conjured Mana Cake') {
+		return function() {
+			decrease_quality(item)
+			decrease_quality(item)
+			decrease_sell_in(item)
+		}
+	} else {
+		return function() {
+			decrease_quality(item)
+			decrease_sell_in(item)
+		}
+	}
+}
+
 function update_quality_for_item(item) {
-	if (item.name != 'Aged Brie' && item.name != 'Backstage passes to a TAFKAL80ETC concert' && item.name != 'Sulfuras, Hand of Ragnaros') {
-    	decrease_quality(item)
-    } else {
-        increase_quality(item)
-        if (item.name == 'Backstage passes to a TAFKAL80ETC concert') {
-          if (item.sell_in <= TIME_SENSITIVE_DAYS_FASTER) {
-            increase_quality(item)
-          }
-          if (item.sell_in <= TIME_SENSITIVE_DAYS_FASTEST) {
-            increase_quality(item)
-          }
-        }
-    }
-    if (item.name != 'Sulfuras, Hand of Ragnaros') {
-      decrease_sell_in(item)
-    }
-    if (item.sell_in < SELL_IN_DATE) {
-      if (item.name != 'Aged Brie') {
-        if (item.name != 'Backstage passes to a TAFKAL80ETC concert') {
-            if (item.name != 'Sulfuras, Hand of Ragnaros') {
-              decrease_quality(item)
-            }
-        } else {
-          clear_quality(item)
-        }
-      } else {
-        increase_quality(item)
-      }
-    }
+	build_updater(item)();
 }
 
 function increase_quality(item) {
