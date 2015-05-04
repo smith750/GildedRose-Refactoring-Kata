@@ -1,4 +1,9 @@
 class GildedRose
+  MAX_QUALITY = 50
+  MIN_QUALITY = 0
+  TIME_SENSITIVE_DAYS_FASTER = 10
+  TIME_SENSITIVE_DAYS_FASTEST = 5
+  SELL_IN_DATE = 0
 
   def initialize(items)
     @items = items
@@ -50,6 +55,26 @@ class GildedRose
         end
       end
     end
+  end
+  
+  def increase_quality(item)
+    if item.quality < MAX_QUALITY
+      item.quality += 1
+    end
+  end
+  
+  def decrease_quality(item)
+    if item.quality > MIN_QUALITY
+      item.quality -= 1
+    end
+  end
+  
+  def clear_quality(item)
+    item.quality = 0
+  end
+  
+  def decrease_sell_in(item)
+    item.sell_in -= 1
   end
 end
 
