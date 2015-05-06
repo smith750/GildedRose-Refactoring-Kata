@@ -16,11 +16,11 @@ class TestUntitled < Test::Unit::TestCase
   end
   
   def test_unchanging_item1
-    assert_item(Item.new(name="Sulfuras, Hand of Ragnaros", sell_in=0, quality=80), 0, 80)
+    assert_item(Item.new(name="Sulfuras, Hand of Ragnaros", sell_in=0, quality=80), 80, 0)
   end
   
   def test_unchanging_item2
-    assert_item(Item.new(name="Sulfuras, Hand of Ragnaros", sell_in=-1, quality=80), -1, 80)
+    assert_item(Item.new(name="Sulfuras, Hand of Ragnaros", sell_in=-1, quality=80), 80, -1)
   end
   
   def test_time_sensitive_item1
@@ -33,6 +33,10 @@ class TestUntitled < Test::Unit::TestCase
   
   def test_time_sensitive_item3
     assert_item(Item.new(name="Backstage passes to a TAFKAL80ETC concert", sell_in=5, quality=49), 50, 4)
+  end
+  
+  def test_conjured_item
+    assert_item(Item.new(name="Conjured Mana Cake", sell_in=3, quality=6), 4, 2)
   end
 
   def assert_item(item, expected_quality, expected_sell_in)

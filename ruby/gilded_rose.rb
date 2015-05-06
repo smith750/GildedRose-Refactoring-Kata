@@ -1,80 +1,75 @@
-class GildedRose
-  MAX_QUALITY = 50
-  MIN_QUALITY = 0
-  TIME_SENSITIVE_DAYS_FASTER = 10
-  TIME_SENSITIVE_DAYS_FASTEST = 5
-  SELL_IN_DATE = 0
+class ItemUpdater
+	MAX_QUALITY = 50
+	MIN_QUALITY = 0
+	TIME_SENSITIVE_DAYS_FASTER = 10
+	TIME_SENSITIVE_DAYS_FASTEST = 5
+	SELL_IN_DATE = 0
+	
+	def initialize(item)
+		@item = item
+		@updater = updater
+	end
+		
+	def increase_quality
+		if @item.quality < MAX_QUALITY
+			@item.quality += 1
+		end
+	end
+		
+	def decrease_quality
+		if @item.quality > MIN_QUALITY
+			@item.quality -= 1
+		end
+	end
+	
+	def clear_quality
+		@item.quality = 0
+	end
+		
+	def decrease_sell_in
+		@item.sell_in -= 1
+	end
+	
+	def update_quality()
+		puts @item.name
+		if @item.name == "Aged Brie"
+			increase_quality
+			decrease_sell_in
+		elsif @item.name == "Backstage passes to a TAFKAL80ETC concert"
+			if @item.sell_in < SELL_IN_DATE
+				clear_quality
+			else
+				increase_quality
+				if @item.sell_in <= TIME_SENSITIVE_DAYS_FASTER
+					increase_quality
+				end
+				if @item.sell_in <= TIME_SENSITIVE_DAYS_FASTEST
+					increase_quality
+				end
+			end
+			decrease_sell_in
+		elsif @item.name == "Sulfuras, Hand of Ragnaros"
+			# do nothing
+		else
+			decrease_quality
+			decrease_sell_in
+		end
+	end
+end
 
+class GildedRose
   def initialize(items)
     @items = items
+	@updaters = []
+	@items.each do |item|
+		@updaters << ItemUpdater.new(item)
+	end
   end
 
   def update_quality()
-    @items.each do |item|
-      if item.name != "Aged Brie" and item.name != "Backstage passes to a TAFKAL80ETC concert"
-        if item.quality > 0
-          if item.name != "Sulfuras, Hand of Ragnaros"
-            item.quality = item.quality - 1
-          end
-        end
-      else
-        if item.quality < 50
-          item.quality = item.quality + 1
-          if item.name == "Backstage passes to a TAFKAL80ETC concert"
-            if item.sell_in < 11
-              if item.quality < 50
-                item.quality = item.quality + 1
-              end
-            end
-            if item.sell_in < 6
-              if item.quality < 50
-                item.quality = item.quality + 1
-              end
-            end
-          end
-        end
-      end
-      if item.name != "Sulfuras, Hand of Ragnaros"
-        item.sell_in = item.sell_in - 1
-      end
-      if item.sell_in < 0
-        if item.name != "Aged Brie"
-          if item.name != "Backstage passes to a TAFKAL80ETC concert"
-            if item.quality > 0
-              if item.name != "Sulfuras, Hand of Ragnaros"
-                item.quality = item.quality - 1
-              end
-            end
-          else
-            item.quality = item.quality - item.quality
-          end
-        else
-          if item.quality < 50
-            item.quality = item.quality + 1
-          end
-        end
-      end
-    end
-  end
-  
-  def increase_quality(item)
-    if item.quality < MAX_QUALITY
-      item.quality += 1
-    end
-  end
-  
-  def decrease_quality(item)
-    if item.quality > MIN_QUALITY
-      item.quality -= 1
-    end
-  end
-  
-  def clear_quality(item)
-    item.quality = 0
-  end
-  
-  def decrease_sell_in(item)
-    item.sell_in -= 1
+    @updaters.each do |updater|
+		updater.update_quality
+	end
   end
 end
 
